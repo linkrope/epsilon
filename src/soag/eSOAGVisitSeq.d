@@ -32,6 +32,7 @@ void ComputeVisitNo()
         for (AP = SOAG.Sym[S].AffPos.Beg; AP <= SOAG.Sym[S].AffPos.End; ++AP)
         {
             PartNum = DIV(SOAG.PartNum[AP] + 1, 2).to!int;
+            // !!!! Hier scheint der Fehler zu sein PartNum darf für Anonyme Nichterminals nicht berechnet werden! S muss in EAG.All sein!
             SOAG.PartNum[AP] = MaxPart - PartNum + 1;
         }
     }
