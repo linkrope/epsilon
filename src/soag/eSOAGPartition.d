@@ -2,6 +2,7 @@ module soag.eSOAGPartition;
 
 import EAG = eEAG;
 import IO = eIO;
+import log;
 import runtime;
 import ALists = soag.eALists;
 import ASets = soag.eASets;
@@ -9,7 +10,6 @@ import BSets = soag.eBSets;
 import SOAG = soag.eSOAG;
 import Protocol = soag.eSOAGProtocol;
 import std.stdio;
-import log : trace;
 
 const unor = -1;
 const nil = 0;
@@ -587,12 +587,10 @@ void DynTopSortSym(int X)
                 ASets.Insert(Leave, a);
         }
     }
-    trace!"Compute partition for symbol %s"(EAG.HNontRepr(X));
-    trace!"Initial Elements in set Cur:"; traceSet(Cur);
-    trace!"Initial Elements in set Leave:"; traceSet(Leave);
+    trace!"compute partition for symbol %s"(EAG.HNontRepr(X));
+    trace!"initially: Cur=%s, Leave=%s"(ASets.elements(Cur), ASets.elements(Leave));
     do
     {
-        trace!"Elements in set Cur:"; traceSet(Cur);
         ALists.Reset(LastCur);
         for (a = ASets.firstIndex; a <= Cur.List.Last; ++a)
             ALists.Append(LastCur, Cur.List.Elem[a]);
@@ -612,19 +610,16 @@ void DynTopSortSym(int X)
                         ++Deg[c];
                         if (DS[d][c] == unor)
                             DS[d][c] = nil;
-                        if (ASets.In(Cur, c)) 
+                        if (ASets.In(Cur, c))
                             ASets.Delete(Cur, c);
-                        else if (Deg[c] == 1) {
-                            trace!"going to delete %d from Leave"(c);
+                        else if (Deg[c] == 1)
                             ASets.Delete(Leave, c);
-                        }
                     }
                 }
             }
         }
         ++Part;
-        trace!"Elements in set Cur   for Part %d:"(Part); traceSet(Cur);
-        trace!"Elements in set Leave for Part %d:"(Part); traceSet(Leave);
+        trace!"partition %s: Cur=%s, Leave=%s"(Part, ASets.elements(Cur), ASets.elements(Leave));
         for (a = ASets.firstIndex; a <= Cur.List.Last; ++a)
         {
             SOAG.PartNum[SOAG.Sym[X].AffPos.Beg + Cur.List.Elem[a]] = Part;
@@ -633,15 +628,12 @@ void DynTopSortSym(int X)
                 if (DS[b][Cur.List.Elem[a]] == element)
                 {
                     --Deg[b];
-                    if (Deg[b] == 0) {
-                        trace!"going to insert %d to Leave"(b);
+                    if (Deg[b] == 0)
                         ASets.Insert(Leave, b);
-                        trace!"Elements in set Leave (snapshot):"; traceSet(Leave);
-                    }
                 }
             }
         }
-        trace!"Elements in set Leave at end:"; traceSet(Leave);
+        trace!"afterwards: Cur=%s, Leave=%s"(ASets.elements(Cur), ASets.elements(Leave));
         tmp = Cur;
         Cur = Leave;
         Leave = tmp;
@@ -652,16 +644,6 @@ void DynTopSortSym(int X)
         SOAG.Sym[X].MaxPart = Part;
     if (SOAG.MaxPart < Part)
         SOAG.MaxPart = Part;
-}
-
-private void traceSet(ASets.ASet set) {
-    int a;
-    if (ASets.IsEmpty(set))
-        trace!"set is empty";
-    else
-        for (a = ASets.firstIndex; a <= set.List.Last; ++a) {
-            trace!"aff %d"(set.List.Elem[a]);
-        }
 }
 
 /**
@@ -690,11 +672,11 @@ void DynTopSort()
  */
 void Compute()
 {
+    const undefined = -1;
+
     SOAG.Init;
-    for (int i = SOAG.firstPartNum; i < SOAG.NextPartNum; ++i)
-    {
-        SOAG.PartNum[i] = -1; // to get the not-set PartNum[] fields identified logging a fatal error
-    }
+    // initialize partition number of each affix position to finally enforce that it's defined
+    SOAG.PartNum[SOAG.firstPartNum .. SOAG.NextPartNum] = undefined;
     VarBuf = new VarBufDesc[50];
     ChangeBuf = new ChangeBufDesc[64];
     NextVarBuf = firstVarBuf;

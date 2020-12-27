@@ -6,7 +6,6 @@ import SOAG = soag.eSOAG;
 import HashTab = soag.eSOAGHash;
 import Protocol = soag.eSOAGProtocol;
 import Stacks = soag.eStacks;
-import log : trace, fatal;
 
 const noVisit = -1;
 SOAG.OpenInteger InDeg;
@@ -21,27 +20,28 @@ Stacks.Stack ZeroInDeg;
 void ComputeVisitNo()
 {
     import std.conv : to;
+    import std.exception : enforce;
+    import std.format: format;
 
     int AP;
     int MaxPart;
     int PartNum;
 
     foreach (S; EAG.All.bitsSet)
-    {
-        if (!EAG.Pred[S]) {
+        if (!EAG.Pred[S])
+        {
             MaxPart = DIV(SOAG.Sym[S].MaxPart + 1, 2).to!int;
             SOAG.Sym[S].MaxPart = MaxPart;
             for (AP = SOAG.Sym[S].AffPos.Beg; AP <= SOAG.Sym[S].AffPos.End; ++AP)
             {
-                if (SOAG.PartNum[AP] < 0)
-                    fatal!"Partition number for affix position %d at symbol %s not determined"(AP, EAG.HNontRepr(S));
+                enforce(SOAG.PartNum[AP] >= 0,
+                        format!"partition number for affix position %d at symbol %s not determined"
+                            (AP, EAG.HNontRepr(S)));
+
                 PartNum = DIV(SOAG.PartNum[AP] + 1, 2).to!int;
                 SOAG.PartNum[AP] = MaxPart - PartNum + 1;
             }
         }
-        else
-            trace!"Skip visit number computation for predicate %s"(EAG.HNontRepr(S));
-    }
 }
 
 /**
