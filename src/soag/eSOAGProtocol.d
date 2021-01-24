@@ -438,12 +438,12 @@ void WriteAffPos(int SymInd)
 void WriteSym(int S)
 {
     IO.WriteText(Out, "Symbol ");
-    EAG.WriteHNont(Out, SOAG.SymOcc[SOAG.Sym[S].FirstOcc].SymInd);
-    IO.WriteText(Out, ": \nFirstOcc: ");
+    EAG.WriteHNont(Out, S);
+    IO.WriteText(Out, ": \n  FirstOcc: ");
     IO.WriteInt(Out, SOAG.Sym[S].FirstOcc);
     IO.WriteLn(Out);
     WriteAffPos(S);
-    IO.WriteString(Out, "MaxPart: ");
+    IO.WriteString(Out, "  MaxPart: ");
     IO.WriteInt(Out, SOAG.Sym[S].MaxPart);
     IO.WriteLn(Out);
     IO.Update(Out);
