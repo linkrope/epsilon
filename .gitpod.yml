@@ -5,6 +5,8 @@ vscode:
     - grammarcraft.epsilon-eag-light-theme@1.2.0:lytiRWCRFOms8Q0rfUWD8g==
     - grammarcraft.epsilon-eag@1.2.0:BxvLqoM9/yCnyw2DYoMIFw==
 
+    - asciidoctor.asciidoctor-vscode@2.8.7:qSxBrflAhUp7qblrDW72iw==
+
 image:
   file: .gitpod.Dockerfile
 
