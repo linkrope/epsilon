@@ -1,3 +1,6 @@
+> The porting of the epsilon compiler generator from Oberon to D is completed.\
+> Further development continues in [linkrope/gamma].
+
 # Extended Affix Grammar Compiler Compiler
 
 ![D](https://github.com/linkrope/epsilon/workflows/D/badge.svg)
@@ -16,3 +19,4 @@ Then, run the compiled compiler. For example:
 
 [dub]: http://code.dlang.org/
 [extended affix grammar]: https://en.wikipedia.org/wiki/Extended_affix_grammar
+[linkrope/gamma]: https://github.com/linkrope/gamma
